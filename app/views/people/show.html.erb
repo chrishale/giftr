@@ -1,0 +1,39 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>Name:</strong>
+  <%= @person.name %>
+</p>
+
+<p>
+  <strong>Budget:</strong>
+  <%= pounds(@person.budget) %> (<%= pounds(@person.remaining_budget) %> remaining)
+</p>
+
+<p>
+  <strong>Gifts</strong>
+  <table>
+  <thead>
+    <tr>
+      <th>Title</th>
+      <th>Price</th>
+      <th colspan="2"></th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @person.gifts.each do |gift| %>
+      <tr>
+        <td><%= gift.title %></td>
+        <td><%= pounds(gift.price) %></td>
+        <td><%= link_to 'Edit', edit_gift_path(gift) %></td>
+        <td><%= link_to 'Destroy', gift, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+</p>
+
+<%= link_to 'Edit', edit_person_path(@person) %> |
+<%= link_to 'Back', people_path %>

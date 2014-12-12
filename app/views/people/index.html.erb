@@ -1,0 +1,56 @@
+<table class="table table-striped" width="100%" style="text-align: left">
+  <caption style="padding-bottom: 20px">
+    <h1 style="line-height: 100px"><span class='glyphicon glyphicon-gift'></span> Giftr</h1>
+    <%= link_to 'Add Person', new_person_path, class: 'btn btn-large btn-primary' %>
+    <%= link_to 'Add Gift', new_gift_path, class: "btn btn-large btn-primary" %>
+  </caption>
+  <thead>
+    <tr>
+      <th width="20%">Name</th>
+      <th width="20%">Budget</th>
+      <th>Gifts</th>
+      <th width="15%"></th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @people.each do |person| %>
+      <tr class="<%= person.complete ? "person-complete" : nil %>">
+        <td><%= person.name %></td>
+        <td><span style="display:inline-block; width: 80px;"><%= pounds(person.budget) %></span><br /><span style="opacity: 0.6;">(<%= pounds(person.remaining_budget) %> remaining)</span></td>
+        <td>
+          <% if person.gifts.any? %>
+            <ul class="gift-list">
+              <% person.gifts.each do |gift| %>
+                <li class="<%= gift.complete ? "complete" : nil %>"><strong>
+                  <% if gift.url.present? %><a target="_blank" href="<%= gift.url %>"><% end %>
+                  <%= gift.title %>
+                  <% if gift.url.present? %></a><% end %>
+                </strong>: <%= pounds(gift.price) %> (<%= link_to "edit", edit_gift_path(gift) %> | <%= link_to "remove", gift_path(gift), method: :delete %>)</li>
+              <% end %>
+            </ul>
+          <% end %>
+        </td>
+        <td>
+          <%= link_to 'Edit', edit_person_path(person), class: "btn btn-primary" %>
+          <%= link_to 'Destroy', person, method: :delete, data: { confirm: 'Are you sure?' }, class: 'btn btn-danger' %>
+        </td>
+      </tr>
+    <% end %>
+  </tbody>
+
+  <tfoot>
+    <tr style="padding-top: 30px;">
+      <td><strong>Total</strong></td>
+      <td>
+        <strong><%= pounds(@people.map(&:budget).inject{|sum,x| sum + x }) %></strong>
+        
+        <!-- <%= pounds([].inject{|sum,x| sum + x }) %> -->
+      </td>
+      <td>
+      <span style="opacity: 0.6;">Total:</span> <strong><%= pounds(@people.map(&:gifts).flatten.map(&:price).inject{|sum,x| sum + x }) %></strong>
+      <br /><span style="opacity: 0.6;">Spent:</span> <strong><%= pounds(@people.map(&:gifts).flatten.select{ |g| g.complete }.map(&:price).inject{|sum,x| sum + x }) %></strong></td>
+      <td></td>
+    </tr>
+  </tfoot>
+</table>
